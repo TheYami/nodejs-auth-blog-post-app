@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../contexts/authentication"; // นำเข้า useAuth
 import usePosts from "../hooks/usePosts";
 import getPublishedDate from "../utils/getPublishedDate";
 
 function HomePage() {
   const navigate = useNavigate();
+  const { logout } = useAuth(); // ดึง logout จาก AuthContext
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
   const [keywords, setKeywords] = useState("");
@@ -27,12 +28,19 @@ function HomePage() {
         >
           Create Post
         </button>
-        {/* 
-           // 🐨 Todo: Exercise #7
-          //  นำ Function `logout` จาก AuthContext มา Execute ใน Prop `onClick`
-        */}
-        <button>Logout</button>
+
+        {/* ปุ่ม Logout */}
+        <button
+          onClick={() => {
+            logout(); // เรียกใช้ logout จาก AuthContext
+            navigate("/login"); // ไปที่หน้า login
+          }}
+        >
+          Logout
+        </button>
       </div>
+
+      {/* ส่วนการค้นหาและการกรองโพสต์ */}
       <div className="search-box-container">
         <div className="search-box">
           <label>
@@ -66,6 +74,8 @@ function HomePage() {
           </label>
         </div>
       </div>
+
+      {/* ส่วนการแสดงโพสต์ */}
       <div className="board">
         {!posts.length && (
           <div className="no-blog-posts-container">
@@ -106,6 +116,7 @@ function HomePage() {
         {isLoading ? <h1>Loading ....</h1> : null}
       </div>
 
+      {/* การแบ่งหน้า */}
       <div className="pagination">
         {page > 1 ? (
           <button className="previous-button" onClick={() => setPage(page - 1)}>
